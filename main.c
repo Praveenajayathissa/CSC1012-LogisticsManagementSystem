@@ -378,6 +378,7 @@ void deliveryMenu(char cityList[MAX_CITIES][NAME_LENGTH], int totalCities, int d
     int menuOption;
 
     void addDelivery(char cityList[MAX_CITIES][NAME_LENGTH],int totalCities,int distanceMap[MAX_CITIES][MAX_CITIES]);
+    void viewAllDeliveries();
 
     if (totalCities < 2)
     {
@@ -402,7 +403,7 @@ void deliveryMenu(char cityList[MAX_CITIES][NAME_LENGTH], int totalCities, int d
             break;
 
         case 2:
-
+            viewAllDeliveries();
             break;
 
         case 3:
@@ -497,3 +498,27 @@ void addDelivery(char cityList[MAX_CITIES][NAME_LENGTH],int totalCities,int dist
     printf("Delivery request recorded successfully.\n");
 }
 
+void viewAllDeliveries()
+{
+    char vehicleName[3][20] = {"Van", "Truck", "Lorry"};
+
+    if (totalDeliveries == 0)
+    {
+        printf("No delivery requests have been added yet.\n");
+        return;
+    }
+
+    printf("\n--- Delivery Requests ---\n");
+    for (int i = 0; i < totalDeliveries; i++)
+    {
+        int vIndex = deliveryVehicle[i] - 1;
+        if (vIndex < 0 || vIndex > 2) vIndex = 0;
+
+        printf("%d) %s -> %s | Vehicle: %s | Weight: %.2f kg\n",
+               i + 1,
+               deliveryFrom[i],
+               deliveryTo[i],
+               vehicleName[vIndex],
+               deliveryWeight[i]);
+    }
+}
