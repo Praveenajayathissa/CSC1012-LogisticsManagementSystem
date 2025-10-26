@@ -7,6 +7,7 @@
 
 void cityMenu(char cityList[MAX_CITIES][NAME_LENGTH], int *totalCities);
 void distanceMenu(int distanceMap[MAX_CITIES][MAX_CITIES],int totalCities,char cityList[MAX_CITIES][NAME_LENGTH]);
+void vehicleMenu();
 
 int main() {
     char cityList[MAX_CITIES][NAME_LENGTH];
@@ -37,7 +38,7 @@ int main() {
             break;
 
         case 3:
-
+            vehicleMenu();
             break;
 
         case 4:
@@ -315,4 +316,53 @@ void showAllDistances(int distanceMap[MAX_CITIES][MAX_CITIES],int totalCities,ch
         printf("\n");
     }
 }
+
+void vehicleMenu()
+{
+    int menuOption;
+    char vehicleType[3][20] = {"Van", "Truck", "Lorry"};
+    int vehicleCapacity[3] = {1000, 5000, 10000};
+    int ratePerKm[3] = {30, 40, 80};
+    int avgSpeed[3] = {60, 50, 45};
+    int fuelEfficiency[3] = {12, 6, 4};
+
+    do
+    {
+        printf("\n--- Vehicle Management Menu ---\n");
+        printf("1. Show Vehicle Information\n");
+        printf("2. Back to Main Menu\n");
+        printf("Select an option: ");
+        scanf("%d", &menuOption);
+        getchar();
+
+        switch (menuOption)
+        {
+        case 1:
+            printf("\n--- Available Vehicles ---\n");
+            printf("Type\tCapacity(kg)\tRate/km(LKR)\tAvgSpeed(km/h)\tFuelEff(km/l)\n");
+            printf("-------------------------------------------------------------------\n");
+            for (int i = 0; i < 3; i++)
+            {
+                printf("%s\t%d\t\t%d\t\t%d\t\t%d\n",
+                       vehicleType[i],
+                       vehicleCapacity[i],
+                       ratePerKm[i],
+                       avgSpeed[i],
+                       fuelEfficiency[i]);
+            }
+            printf("-------------------------------------------------------------------\n");
+            break;
+
+        case 2:
+            printf("Returning to Main Menu...\n");
+            break;
+
+        default:
+            printf("Invalid input! Please choose a valid option.\n");
+            break;
+        }
+
+    } while (menuOption != 2);
+}
+
 
