@@ -5,11 +5,22 @@
 #define MAX_CITIES 30
 #define NAME_LENGTH 50
 #define MAX_DELIVERIES 30
+#define FUEL_PRICE 310.0f
 
 char deliveryFrom[MAX_DELIVERIES][NAME_LENGTH];
 char deliveryTo[MAX_DELIVERIES][NAME_LENGTH];
 int  deliveryVehicle[MAX_DELIVERIES];
 float deliveryWeight[MAX_DELIVERIES];
+int deliveryDistance[MAX_DELIVERIES];
+
+float deliveryCost[MAX_DELIVERIES];
+float deliveryTimeHours[MAX_DELIVERIES];
+float fuelUsedLiters[MAX_DELIVERIES];
+float fuelCostAmount[MAX_DELIVERIES];
+float totalOperationalCost[MAX_DELIVERIES];
+float deliveryProfit[MAX_DELIVERIES];
+float customerCharge[MAX_DELIVERIES];
+
 int totalDeliveries = 0;
 
 void cityMenu(char cityList[MAX_CITIES][NAME_LENGTH], int *totalCities);
@@ -422,6 +433,9 @@ void addDelivery(char cityList[MAX_CITIES][NAME_LENGTH],int totalCities,int dist
 {
     char vehicleName[3][20] = {"Van", "Truck", "Lorry"};
     int vehicleCapacity[3] = {1000, 5000, 10000};
+    int ratePerKm[3] = {30, 40, 80};
+    int avgSpeed[3] = {60, 50, 45};
+    int fuelEff[3] = {12, 6, 4};
 
     if (totalDeliveries >= MAX_DELIVERIES)
     {
@@ -489,13 +503,55 @@ void addDelivery(char cityList[MAX_CITIES][NAME_LENGTH],int totalCities,int dist
         return;
     }
 
+    int d = distanceMap[fromIndex - 1][toIndex - 1];
+    float R = (float)ratePerKm[vehicleChoice - 1];
+    float S = (float)avgSpeed[vehicleChoice - 1];
+    float E = (float)fuelEff[vehicleChoice - 1];
+    float W = weight;
+    float D = (float)d;
+    float delivery_cost = D * R * (1.0f + (W / 10000.0f));
+    float time_hours = (S > 0) ? (D / S) : 0.0f;
+    float fuel_used = (E > 0) ? (D / E) : 0.0f;
+    float fuel_cost = fuel_used * FUEL_PRICE;
+    float total_cost = delivery_cost + fuel_cost;
+    float profit_amount = delivery_cost * 0.25f;
+    float final_charge = total_cost + profit_amount;
+
     strcpy(deliveryFrom[totalDeliveries], cityList[fromIndex - 1]);
     strcpy(deliveryTo[totalDeliveries], cityList[toIndex - 1]);
     deliveryVehicle[totalDeliveries] = vehicleChoice;
     deliveryWeight[totalDeliveries] = weight;
+    deliveryDistance[totalDeliveries] = d;
+
+    deliveryCost[totalDeliveries] = delivery_cost;
+    deliveryTimeHours[totalDeliveries] = time_hours;
+    fuelUsedLiters[totalDeliveries] = fuel_used;
+    fuelCostAmount[totalDeliveries] = fuel_cost;
+    totalOperationalCost[totalDeliveries] = total_cost;
+    deliveryProfit[totalDeliveries] = profit_amount;
+    customerCharge[totalDeliveries] = final_charge;
+
+
     totalDeliveries++;
 
-    printf("Delivery request recorded successfully.\n");
+    printf("\n==========================================\n");
+    printf("DELIVERY ESTIMATE\n");
+    printf("------------------------------------------\n");
+    printf("From: %s\n", cityList[fromIndex - 1]);
+    printf("To:   %s\n", cityList[toIndex - 1]);
+    printf("Vehicle: %s\n", vehicleName[vehicleChoice - 1]);
+    printf("Weight: %.2f kg\n", weight);
+    printf("Distance: %d km\n", d);
+    printf("------------------------------------------\n");
+    printf("Base Cost: %.2f LKR\n", delivery_cost);
+    printf("Fuel Used: %.2f L\n", fuel_used);
+    printf("Fuel Cost: %.2f LKR\n", fuel_cost);
+    printf("Operational Cost: %.2f LKR\n", total_cost);
+    printf("Profit (25%%): %.2f LKR\n", profit_amount);
+    printf("Customer Charge: %.2f LKR\n", final_charge);
+    printf("Estimated Time: %.2f hours\n", time_hours);
+    printf("==========================================\n");
+
 }
 
 void viewAllDeliveries()
@@ -520,5 +576,7 @@ void viewAllDeliveries()
                deliveryTo[i],
                vehicleName[vIndex],
                deliveryWeight[i]);
+               deliveryDistance[i],
+               customerCharge[i];
     }
 }
