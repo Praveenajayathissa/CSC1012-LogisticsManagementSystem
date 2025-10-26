@@ -4,10 +4,18 @@
 
 #define MAX_CITIES 30
 #define NAME_LENGTH 50
+#define MAX_DELIVERIES 30
+
+char deliveryFrom[MAX_DELIVERIES][NAME_LENGTH];
+char deliveryTo[MAX_DELIVERIES][NAME_LENGTH];
+int  deliveryVehicle[MAX_DELIVERIES];
+float deliveryWeight[MAX_DELIVERIES];
+int totalDeliveries = 0;
 
 void cityMenu(char cityList[MAX_CITIES][NAME_LENGTH], int *totalCities);
 void distanceMenu(int distanceMap[MAX_CITIES][MAX_CITIES],int totalCities,char cityList[MAX_CITIES][NAME_LENGTH]);
 void vehicleMenu();
+void deliveryMenu(char cityList[MAX_CITIES][NAME_LENGTH], int totalCities, int distanceMap[MAX_CITIES][MAX_CITIES]);
 
 int main() {
     char cityList[MAX_CITIES][NAME_LENGTH];
@@ -42,7 +50,7 @@ int main() {
             break;
 
         case 4:
-
+            deliveryMenu(cityList, totalCities, distanceMap);
             break;
 
         case 5:
@@ -369,6 +377,8 @@ void deliveryMenu(char cityList[MAX_CITIES][NAME_LENGTH], int totalCities, int d
 {
     int menuOption;
 
+    void addDelivery(char cityList[MAX_CITIES][NAME_LENGTH],int totalCities,int distanceMap[MAX_CITIES][MAX_CITIES]);
+
     if (totalCities < 2)
     {
         printf("Please add at least two cities before using delivery requests.\n");
@@ -388,7 +398,7 @@ void deliveryMenu(char cityList[MAX_CITIES][NAME_LENGTH], int totalCities, int d
         switch (menuOption)
         {
         case 1:
-
+            addDelivery(cityList, totalCities, distanceMap);
             break;
 
         case 2:
@@ -405,5 +415,85 @@ void deliveryMenu(char cityList[MAX_CITIES][NAME_LENGTH], int totalCities, int d
         }
 
     } while (menuOption != 3);
+}
+
+void addDelivery(char cityList[MAX_CITIES][NAME_LENGTH],int totalCities,int distanceMap[MAX_CITIES][MAX_CITIES])
+{
+    char vehicleName[3][20] = {"Van", "Truck", "Lorry"};
+    int vehicleCapacity[3] = {1000, 5000, 10000};
+
+    if (totalDeliveries >= MAX_DELIVERIES)
+    {
+        printf("Cannot add more deliveries. Limit reached.\n");
+        return;
+    }
+
+    printf("\nAvailable cities:\n");
+    for (int i = 0; i < totalCities; i++)
+    {
+        printf("%d) %s\n", i + 1, cityList[i]);
+    }
+
+    int fromIndex;
+    int toIndex;
+    printf("Enter source city number: ");
+    scanf("%d", &fromIndex);
+    getchar();
+    printf("Enter destination city number: ");
+    scanf("%d", &toIndex);
+    getchar();
+
+    if (fromIndex < 1 || fromIndex > totalCities ||
+        toIndex < 1 || toIndex > totalCities)
+    {
+        printf("Invalid city selection.\n");
+        return;
+    }
+
+    if (fromIndex == toIndex)
+    {
+        printf("Source and destination cannot be the same.\n");
+        return;
+    }
+
+    if (distanceMap[fromIndex - 1][toIndex - 1] == 0 &&
+        fromIndex != toIndex)
+    {
+        printf("No distance set between these two cities yet.\n");
+        return;
+    }
+
+    float weight;
+    printf("Enter package weight (kg): ");
+    scanf("%f", &weight);
+    getchar();
+
+    int vehicleChoice;
+    printf("Select vehicle type:\n");
+    printf("1) Van\n2) Truck\n3) Lorry\n");
+    printf("Enter your choice: ");
+    scanf("%d", &vehicleChoice);
+    getchar();
+
+    if (vehicleChoice < 1 || vehicleChoice > 3)
+    {
+        printf("Invalid vehicle type.\n");
+        return;
+    }
+
+    if (weight > vehicleCapacity[vehicleChoice - 1])
+    {
+        printf("Weight exceeds capacity of selected vehicle (%d kg).\n",
+               vehicleCapacity[vehicleChoice - 1]);
+        return;
+    }
+
+    strcpy(deliveryFrom[totalDeliveries], cityList[fromIndex - 1]);
+    strcpy(deliveryTo[totalDeliveries], cityList[toIndex - 1]);
+    deliveryVehicle[totalDeliveries] = vehicleChoice;
+    deliveryWeight[totalDeliveries] = weight;
+    totalDeliveries++;
+
+    printf("Delivery request recorded successfully.\n");
 }
 
