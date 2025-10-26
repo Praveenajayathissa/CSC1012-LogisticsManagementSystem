@@ -27,6 +27,7 @@ void cityMenu(char cityList[MAX_CITIES][NAME_LENGTH], int *totalCities);
 void distanceMenu(int distanceMap[MAX_CITIES][MAX_CITIES],int totalCities,char cityList[MAX_CITIES][NAME_LENGTH]);
 void vehicleMenu();
 void deliveryMenu(char cityList[MAX_CITIES][NAME_LENGTH], int totalCities, int distanceMap[MAX_CITIES][MAX_CITIES]);
+void reportsMenu();
 
 int main() {
     char cityList[MAX_CITIES][NAME_LENGTH];
@@ -65,7 +66,7 @@ int main() {
             break;
 
         case 5:
-
+            reportsMenu();
             break;
 
         case 6:
@@ -579,4 +580,58 @@ void viewAllDeliveries()
                deliveryDistance[i],
                customerCharge[i];
     }
+}
+
+void reportsMenu()
+{
+    if (totalDeliveries == 0)
+    {
+        printf("No deliveries recorded yet.\n");
+        return;
+    }
+
+    int sumDistance = 0;
+    float sumTime = 0.0f;
+    float sumRevenue = 0.0f;
+    float sumProfit = 0.0f;
+
+    int longestDist = deliveryDistance[0];
+    int shortestDist = deliveryDistance[0];
+    int longestIndex = 0;
+    int shortestIndex = 0;
+
+    for (int i = 0; i < totalDeliveries; i++)
+    {
+        sumDistance += deliveryDistance[i];
+        sumTime += deliveryTimeHours[i];
+        sumRevenue += customerCharge[i];
+        sumProfit += deliveryProfit[i];
+
+        if (deliveryDistance[i] > longestDist)
+        {
+            longestDist = deliveryDistance[i];
+            longestIndex = i;
+        }
+
+        if (deliveryDistance[i] < shortestDist)
+        {
+            shortestDist = deliveryDistance[i];
+            shortestIndex = i;
+        }
+    }
+
+    printf("\n--- Performance Report ---\n");
+    printf("Total Deliveries Completed : %d\n", totalDeliveries);
+    printf("Total Distance Covered     : %d km\n", sumDistance);
+    printf("Average Delivery Time      : %.2f hours\n", sumTime / totalDeliveries);
+    printf("Total Revenue              : %.2f LKR\n", sumRevenue);
+    printf("Total Profit               : %.2f LKR\n", sumProfit);
+    printf("Longest Route              : %d km (%s -> %s)\n",
+           longestDist,
+           deliveryFrom[longestIndex],
+           deliveryTo[longestIndex]);
+    printf("Shortest Route             : %d km (%s -> %s)\n",
+           shortestDist,
+           deliveryFrom[shortestIndex],
+           deliveryTo[shortestIndex]);
 }
