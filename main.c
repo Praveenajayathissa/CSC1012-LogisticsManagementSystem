@@ -365,4 +365,45 @@ void vehicleMenu()
     } while (menuOption != 2);
 }
 
+void deliveryMenu(char cityList[MAX_CITIES][NAME_LENGTH], int totalCities, int distanceMap[MAX_CITIES][MAX_CITIES])
+{
+    int menuOption;
+
+    if (totalCities < 2)
+    {
+        printf("Please add at least two cities before using delivery requests.\n");
+        return;
+    }
+
+    do
+    {
+        printf("\n--- Delivery Management Menu ---\n");
+        printf("1. Add Delivery Request\n");
+        printf("2. View Delivery Requests\n");
+        printf("3. Back to Main Menu\n");
+        printf("Select an option: ");
+        scanf("%d", &menuOption);
+        getchar();
+
+        switch (menuOption)
+        {
+        case 1:
+
+            break;
+
+        case 2:
+
+            break;
+
+        case 3:
+            printf("Returning to Main Menu...\n");
+            break;
+
+        default:
+            printf("Invalid input! Please choose a valid option.\n");
+            break;
+        }
+
+    } while (menuOption != 3);
+}
 
