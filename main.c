@@ -6,6 +6,7 @@
 #define NAME_LENGTH 50
 
 void cityMenu(char cityList[MAX_CITIES][NAME_LENGTH], int *totalCities);
+void distanceMenu(int distanceMap[MAX_CITIES][MAX_CITIES],int totalCities,char cityList[MAX_CITIES][NAME_LENGTH]);
 
 int main() {
     char cityList[MAX_CITIES][NAME_LENGTH];
@@ -32,7 +33,7 @@ int main() {
             break;
 
         case 2:
-
+            distanceMenu(distanceMap, totalCities,cityList);
             break;
 
         case 3:
@@ -200,5 +201,118 @@ void renameCity(char cityList[MAX_CITIES][NAME_LENGTH], int totalCities)
     cityList[index - 1][strcspn(cityList[index - 1], "\n")] = '\0';
 
     printf("City name updated successfully!\n");
+}
+
+void distanceMenu(int distanceMap[MAX_CITIES][MAX_CITIES],int totalCities,char cityList[MAX_CITIES][NAME_LENGTH])
+{
+    int menuOption;
+    void updateDistance(int distanceMap[MAX_CITIES][MAX_CITIES],int totalCities,char cityList[MAX_CITIES][NAME_LENGTH]);
+    void showAllDistances(int distanceMap[MAX_CITIES][MAX_CITIES],int totalCities,char cityList[MAX_CITIES][NAME_LENGTH]);
+
+
+    if (totalCities < 1)
+    {
+        printf("No cities available. Please add cities first.\n");
+        return;
+    }
+    do
+    {
+        printf("\n--- Distance Management Menu ---\n");
+        printf("1. Add / Edit Distance Between Cities\n");
+        printf("2. View Distance Table\n");
+        printf("3. Back to Main Menu\n");
+        printf("Select an option: ");
+        scanf("%d", &menuOption);
+        getchar();
+        switch (menuOption)
+        {
+        case 1:
+            updateDistance(distanceMap, totalCities, cityList);
+            break;
+        case 2:
+            showAllDistances(distanceMap, totalCities, cityList);
+            break;
+        case 3:
+            printf("Returning to main menu...\n");
+            break;
+        default:
+            printf("Invalid input! Please choose a valid option.\n");
+            break;
+        }
+    }
+    while (menuOption != 3);
+}
+
+void updateDistance(int distanceMap[MAX_CITIES][MAX_CITIES],int totalCities,char cityList[MAX_CITIES][NAME_LENGTH])
+{
+    if (totalCities < 2)
+    {
+        printf("At least two cities are needed to set distances.\n");
+        return;
+    }
+    printf("\n--- Set Distance Between Cities ---\n");
+    for (int i = 0; i < totalCities; i++)
+    {
+        printf("%d) %s\n", i + 1, cityList[i]);
+    }
+    int firstCity, secondCity;
+    int kmDistance;
+    printf("Enter number of the first city: ");
+    scanf("%d", &firstCity);
+    getchar();
+    printf("Enter number of the second city: ");
+    scanf("%d", &secondCity);
+    getchar();
+    if (firstCity < 1 || firstCity > totalCities ||
+        secondCity < 1 || secondCity > totalCities)
+    {
+        printf("Invalid city selection.\n");
+        return;
+    }
+    if (firstCity == secondCity)
+    {
+        distanceMap[firstCity - 1][secondCity - 1] = 0;
+        printf("Distance set to 0 (same city).\n");
+        return;
+    }
+    printf("Enter distance in km: ");
+    scanf("%d", &kmDistance);
+    getchar();
+    if (kmDistance < 0)
+    {
+        printf("Distance cannot be negative.\n");
+        return;
+    }
+    distanceMap[firstCity - 1][secondCity - 1] = kmDistance;
+    distanceMap[secondCity - 1][firstCity - 1] = kmDistance;
+    printf("Distance updated: %s <-> %s = %d km\n",
+           cityList[firstCity - 1],
+           cityList[secondCity - 1],
+           kmDistance);
+}
+
+void showAllDistances(int distanceMap[MAX_CITIES][MAX_CITIES],int totalCities,char cityList[MAX_CITIES][NAME_LENGTH])
+{
+    if (totalCities < 2)
+    {
+        printf("At least two cities are required to view distances.\n");
+        return;
+    }
+    printf("\n--- Distance Table (km) ---\n");
+    printf("          ");
+    for (int col = 0; col < totalCities; col++)
+    {
+        printf("%-12s", cityList[col]);
+    }
+    printf("\n");
+    for (int row = 0; row < totalCities; row++)
+    {
+        printf("%-10s", cityList[row]);
+        for (int col = 0; col < totalCities; col++)
+        {
+            printf("%-12d", distanceMap[row][col]);
+        }
+        printf("\n");
+    }
 }
 
